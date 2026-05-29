@@ -4,12 +4,14 @@ PATH_TO_INSTALLATION=/var/www/pterodactyl
 cd $PATH_TO_INSTALLATION
 
 LATEST_VERSION=$(curl --silent https://cdn.pterodactyl.io/releases/latest.json | jq '.panel' | sed 's/"//g')
-CURRENT_VERSION=$(php artisan p:info | grep 'Panel Version' | awk '{ print substr ($0, 20 ) }')
+CURRENT_VERSION=$(php artisan p:info | grep 'Panel Version' | awk '{ s = substr($0,19); gsub(/ /, "", s); print s }')
 
 if [ "$LATEST_VERSION" = "$CURRENT_VERSION" ]
 then
   exit
 fi
+
+echo "Panel is outdated! Current version: v$CURRENT_VERSION. Latest version: v$LATEST_VERSION"
 
 export COMPOSER_ALLOW_SUPERUSER=1;
 echo "Setting Panel to maintenance mode.."
